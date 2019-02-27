@@ -50,7 +50,7 @@ class mipsMachine:
         self.code = arra
         self.pc = 0
         self.offset = 0x2000
-        #instruction count [total, r, i, j]
+        #instruction count [total, ALU, jump, branch, memory, other]
         self.count = [0]*6
       
     def execute(self):
@@ -94,7 +94,6 @@ class mipsMachine:
             self.reg[rd] = self.reg[rt] >> sh
         elif func == 0x20:#add
             self.reg[rd]=self.reg[rs]+self.reg[rt]
-	    #todo error handling
         elif func == 0x21:#addu
             self.reg[rd]=self.reg[rs]+self.reg[rt]
             self.count[1]-=1
@@ -137,12 +136,12 @@ class mipsMachine:
         if opcode == 4:#beq
             if self.reg[rs] == self.reg[rt]:
                 self.pc += imm
-                self.count[3] += 1
+            self.count[3] += 1
         if opcode == 5:#bne 
             if self.reg[rs] != self.reg[rt]:
                 self.pc += imm
-                self.count[3] += 1
-        if opcode == 6: #andi
+            self.count[3] += 1
+        if opcode == 0xc: #andi
             imm = (0xffff & command)            #check this
             self.reg[rt] = self.reg[rs] & imm
             self.count[1] += 1
@@ -181,7 +180,7 @@ class mipsMachine:
         self.pc *= 4
         print('PC: ' + str(self.pc))
         print('Memory: Hex  Decimal')
-        while c < 0x14:
+        while c < 0x15:
             print(str(format(self.offset+(c*4),'0x'))+':  '+hex(self.mem[c]&0xffffffff)+'   '+str(self.mem[c]))
             c+=1
         print('Total instructions run: '+str(self.count[0]))
