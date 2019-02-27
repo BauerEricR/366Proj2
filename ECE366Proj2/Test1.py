@@ -166,7 +166,7 @@ class mipsMachine:
     def jtype(self,command):
         self.count[2]+=1
         #extract values from command
-        addr = 0x3ffffff & (command >> 21)
+        addr = 0x3ffffff & (command)
         opcode = 0x3f & (command >> 26) 
         if opcode == 2:
             self.pc = (((self.pc<<2)&0xf0000000)| addr<<2) >> 2
